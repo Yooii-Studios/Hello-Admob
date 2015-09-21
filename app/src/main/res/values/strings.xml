@@ -9,5 +9,6 @@
     <string name="quit_ad_dialog_title_text">Do you want to quit this app?</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="title_activity_non_app_compat">NonAppCompatActivity</string>
 
 </resources>
