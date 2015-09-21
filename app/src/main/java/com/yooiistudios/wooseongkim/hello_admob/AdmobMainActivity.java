@@ -1,6 +1,7 @@
 package com.yooiistudios.wooseongkim.hello_admob;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -18,7 +19,7 @@ import com.yooiistudios.wooseongkim.hello_admob.common.network.InternetConnectio
 public class AdmobMainActivity extends AppCompatActivity {
     private static final String FULLSCREEN__AD_UNIT_ID  = "ca-app-pub-2310680050309555/7982499025";
     private static final String BANNER_AD_UNIT_ID  = "ca-app-pub-2310680050309555/7499867427";
-    private static final String QUIT_AD_UNIT_ID = "ca-app-pub-2310680050309555/3689313020";
+    protected static final String QUIT_AD_UNIT_ID = "ca-app-pub-2310680050309555/3689313020";
 
     private AdView mAdView;
     private AdView mMediumAdView;
@@ -133,7 +134,7 @@ public class AdmobMainActivity extends AppCompatActivity {
         }
     }
 
-    public void onButtonClicked(View view) {
+    public void onButtonClick(View view) {
         // Admob
         final InterstitialAd fullScreenAdView = new InterstitialAd(this);
         fullScreenAdView.setAdUnitId(FULLSCREEN__AD_UNIT_ID);
@@ -146,5 +147,9 @@ public class AdmobMainActivity extends AppCompatActivity {
         });
         AdRequest fullAdRequest = new AdRequest.Builder().build();
         fullScreenAdView.loadAd(fullAdRequest);
+    }
+
+    public void onActivityButtonClick(View view) {
+        startActivity(new Intent(this, NonAppCompatActivity.class));
     }
 }

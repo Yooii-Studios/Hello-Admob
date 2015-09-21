@@ -10,11 +10,21 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="Show Fullscreen Ad"
-        android:onClick="onButtonClicked"
+        android:onClick="onButtonClick"
+        tools:ignore="HardcodedText"/>
+
+    <Button
+        android:id="@+id/activity_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/button"
+        android:layout_marginBottom="8dp"
+        android:text="Start NonApp Compat Activity"
+        android:onClick="onActivityButtonClick"
         tools:ignore="HardcodedText"/>
 
 </RelativeLayout>
