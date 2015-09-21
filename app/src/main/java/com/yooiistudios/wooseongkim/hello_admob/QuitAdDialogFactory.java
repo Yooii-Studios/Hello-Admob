@@ -91,8 +91,7 @@ public class QuitAdDialogFactory {
             View tempFrameView = createTempFrameView(activity);
             dialog.setView(tempFrameView);
 
-            View rotatableAdView = createRotatableAdView(tempFrameView, options.portraitAdView,
-                    options.landscapeAdView, dialog);
+            View rotatableAdView = createRotatableAdView(tempFrameView, options, dialog);
             dialog.setView(rotatableAdView);
         }
         dialog.setCanceledOnTouchOutside(false);
@@ -138,8 +137,7 @@ public class QuitAdDialogFactory {
             View contentView = createTempFrameView(activity);
             dialog.setView(contentView);
 
-            View rotatableAdView = createRotatableAdView(contentView, options.portraitAdView,
-                    options.landscapeAdView, dialog);
+            View rotatableAdView = createRotatableAdView(contentView, options, dialog);
             dialog.setView(rotatableAdView);
         }
         dialog.setCanceledOnTouchOutside(false);
@@ -158,9 +156,10 @@ public class QuitAdDialogFactory {
     }
 
     private static View createRotatableAdView(@NonNull final View tempFrameView,
-                                              @NonNull final AdView portraitAdView,
-                                              @Nullable final AdView landscapeAdView,
+                                              @NonNull final Options options,
                                               @NonNull final Dialog alertDialog) {
+        final AdView portraitAdView = options.portraitAdView;
+        final AdView landscapeAdView = options.landscapeAdView;
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
             @Override
@@ -168,9 +167,13 @@ public class QuitAdDialogFactory {
                 ViewParent parentView = tempFrameView.getParent();
                 if (parentView instanceof ViewGroup) {
                     final ViewGroup contentWrapper = ((ViewGroup) parentView);
-                    int paddingTop = tempFrameView.getResources().getDimensionPixelSize(
-                            R.dimen.quit_dialog_padding_top);
-                    contentWrapper.setPadding(0, paddingTop, 0, 0);
+
+                    if (options.isAppCompat) {
+                        int paddingTop = tempFrameView.getResources().getDimensionPixelSize(
+                                R.dimen.quit_dialog_padding_top);
+                        contentWrapper.setPadding(0, paddingTop, 0, 0);
+                    }
+
                     contentWrapper.removeView(tempFrameView);
 
                     if (isDevicePortrait(tempFrameView)) {
