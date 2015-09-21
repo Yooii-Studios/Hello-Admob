@@ -1,10 +1,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".AdmobMainActivity"
-    android:id="@+id/mainLayout">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".AdmobMainActivity"
+    tools:ignore="HardcodedText">
 
     <Button
         android:id="@+id/button"
@@ -13,8 +14,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="Show Fullscreen Ad"
-        android:onClick="onButtonClick"
-        tools:ignore="HardcodedText"/>
+        android:onClick="onButtonClick"/>
 
     <Button
         android:id="@+id/activity_button"
@@ -24,7 +24,16 @@
         android:layout_above="@id/button"
         android:layout_marginBottom="8dp"
         android:text="Start NonApp Compat Activity"
-        android:onClick="onActivityButtonClick"
-        tools:ignore="HardcodedText"/>
+        android:onClick="onActivityButtonClick"/>
+
+    <Button
+        android:id="@+id/purchase_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
+        android:text="Purchase"
+        android:layout_above="@id/activity_button"
+        android:onClick="onPurchaseButtonClick"/>
 
 </RelativeLayout>
