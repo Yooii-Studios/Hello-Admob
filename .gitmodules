@@ -1,0 +1,3 @@
+[submodule "libraries/QuitAdDialog"]
+	path = libraries/QuitAdDialog
+	url = git@github.com:Yooii-Studios/QuitAdDialog.git

@@ -1,11 +1,14 @@
 package com.yooiistudios.wooseongkim.hello_admob;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.google.android.gms.ads.AdListener;
@@ -13,6 +16,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
+import com.yooiistudios.quitaddialog.QuitAdDialogFactory;
 import com.yooiistudios.wooseongkim.hello_admob.common.network.InternetConnectionManager;
 
 
@@ -29,10 +33,14 @@ public class AdmobMainActivity extends AppCompatActivity {
     private AdView mQuitPortraitAdView;
     private AdView mQuitLandscapeAdView;
 
+    boolean mIsPurchased = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admob_main);
+
+        mIsPurchased = false;
 
         // adView 를 만듭니다.
         initBannerAdView();
@@ -40,7 +48,7 @@ public class AdmobMainActivity extends AppCompatActivity {
 
         // android:id="@+id/mainLayout" 속성을 지정했다고 가정하고
         // LinearLayout 을 찾습니다.
-        RelativeLayout layout = (RelativeLayout)findViewById(R.id.mainLayout);
+        RelativeLayout layout = (RelativeLayout)findViewById(R.id.main_layout);
 
         // 레이아웃에 adView 를 추가합니다.
         layout.addView(mAdView);
@@ -76,7 +84,6 @@ public class AdmobMainActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.BELOW, mAdView.getId());
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        params.topMargin = 50;
         mMediumAdView.setLayoutParams(params);
     }
 
@@ -108,28 +115,27 @@ public class AdmobMainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!IabProducts.containsSku(IabProducts.SKU_NO_ADS, this) &&
-                InternetConnectionManager.isNetworkAvailable(this)) {
+        QuitAdDialogFactory.Options options =
+                new QuitAdDialogFactory.Options(this, mQuitPortraitAdView);
 
-            QuitAdDialogFactory.Options options =
-                    new QuitAdDialogFactory.Options(this, mQuitPortraitAdView);
+        if (InternetConnectionManager.isNetworkAvailable(this) && !mIsPurchased) {
+            // 앱의 회전 여부에 따라서 isRotatable 조절
             options.isRotatable = true;
             options.landscapeAdView = mQuitLandscapeAdView;
-
-            Dialog adDialog = QuitAdDialogFactory.makeDialog(options);
-            if (adDialog != null) {
-                adDialog.show();
-                // make AdView again for next quit dialog
-                // prevent child reference
-                // 가로 모드는 7.5% 가량 사용하고 있기에 속도를 위해서 광고를 계속 불러오지 않음
-                mQuitPortraitAdView = QuitAdDialogFactory.initPortraitAdView(this, QUIT_AD_UNIT_ID,
-                        mQuitAdRequest);
-            } else {
-                // just finish activity when dialog is null
-                super.onBackPressed();
-            }
         } else {
-            // just finish activity when no ad item is bought
+            options.isAdIncluded = false;
+        }
+
+        Dialog adDialog = QuitAdDialogFactory.makeDialog(options);
+        if (adDialog != null) {
+            adDialog.show();
+            // make AdView again for next quit dialog
+            // prevent child reference
+            // 가로 모드는 7.5% 가량 사용하고 있기에 속도를 위해서 광고를 계속 불러오지 않음
+            mQuitPortraitAdView = QuitAdDialogFactory.initPortraitAdView(this, QUIT_AD_UNIT_ID,
+                    mQuitAdRequest);
+        } else {
+            // just finish activity when dialog is null
             super.onBackPressed();
         }
     }
@@ -151,5 +157,19 @@ public class AdmobMainActivity extends AppCompatActivity {
 
     public void onActivityButtonClick(View view) {
         startActivity(new Intent(this, NonAppCompatActivity.class));
+    }
+
+    @SuppressLint("SetTextI18n")
+    public void onPurchaseButtonClick(View view) {
+        mIsPurchased = !mIsPurchased;
+
+        if (mIsPurchased) {
+            ((Button)view).setText("Purchased");
+        } else {
+            ((Button)view).setText("Purchase");
+        }
+
+        SharedPreferences prefs = getSharedPreferences("prefs_purchased", MODE_PRIVATE);
+        prefs.edit().putBoolean("purchased", mIsPurchased).apply();
     }
 }
