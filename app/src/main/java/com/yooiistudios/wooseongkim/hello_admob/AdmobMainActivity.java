@@ -3,8 +3,6 @@ package com.yooiistudios.wooseongkim.hello_admob;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -31,22 +29,22 @@ public class AdmobMainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admob_main);
 
-        // adView를 만듭니다.
+        // adView 를 만듭니다.
         mAdView = new AdView(this);
         mAdView.setAdUnitId(BANNER_AD_UNIT_ID);
         mAdView.setAdSize(AdSize.BANNER);
 
         // android:id="@+id/mainLayout" 속성을 지정했다고 가정하고
-        // LinearLayout을 찾습니다.
+        // LinearLayout 을 찾습니다.
         RelativeLayout layout = (RelativeLayout)findViewById(R.id.mainLayout);
 
-        // 레이아웃에 adView를 추가합니다.
+        // 레이아웃에 adView 를 추가합니다.
         layout.addView(mAdView);
 
         // 기본 요청을 시작합니다.
         AdRequest adRequest = new AdRequest.Builder().build();
 
-        // 광고 요청으로 adView를 로드합니다.
+        // 광고 요청으로 adView 를 로드합니다.
         mAdView.loadAd(adRequest);
 
         initQuitAdView();
@@ -79,30 +77,8 @@ public class AdmobMainActivity extends Activity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_admob_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onBackPressed() {
-        if (!SKIabProducts.containsSku(SKIabProducts.SKU_NO_ADS, this) &&
+        if (!IabProducts.containsSku(IabProducts.SKU_NO_ADS, this) &&
                 InternetConnectionManager.isNetworkAvailable(this)) {
             AlertDialog adDialog = QuitAdDialogFactory.makeDialog(AdmobMainActivity.this,
                     mQuitMediumAdView, mQuitLargeBannerAdView);
