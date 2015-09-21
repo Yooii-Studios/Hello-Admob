@@ -21,5 +21,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':libraries:QuitAdDialog')
     compile 'com.google.android.gms:play-services:7.8.0'
 }
