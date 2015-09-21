@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
@@ -39,12 +40,21 @@ public class QuitAdDialogFactory {
 
     private QuitAdDialogFactory() { throw new AssertionError("Must not create this class!"); }
 
-    public static AdView initAdView(Context context, AdSize adSize, String adUnitId,
-                                    final com.google.android.gms.ads.AdRequest adRequest) {
+    public static AdView initPortraitAdView(Context context, String adUnitId, AdRequest adRequest) {
         // make AdView again for next quit dialog
         // prevent child reference
         AdView adView = new AdView(context);
-        adView.setAdSize(adSize);
+        adView.setAdSize(AdSize.MEDIUM_RECTANGLE);
+        adView.setAdUnitId(adUnitId);
+        adView.loadAd(adRequest);
+        return adView;
+    }
+
+    public static AdView initLandscapeAdView(Context context, String adUnitId, AdRequest adRequest) {
+        // make AdView again for next quit dialog
+        // prevent child reference
+        AdView adView = new AdView(context);
+        adView.setAdSize(AdSize.LARGE_BANNER);
         adView.setAdUnitId(adUnitId);
         adView.loadAd(adRequest);
         return adView;

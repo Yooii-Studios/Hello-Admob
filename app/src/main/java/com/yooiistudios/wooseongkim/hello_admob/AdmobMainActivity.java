@@ -83,10 +83,10 @@ public class AdmobMainActivity extends AppCompatActivity {
         // make AdView earlier for showing ad fast in the quit dialog
         // 애드몹 - Quit Dialog
         mQuitAdRequest = new AdRequest.Builder().build();
-        mQuitPortraitAdView = QuitAdDialogFactory.initAdView(this, AdSize.MEDIUM_RECTANGLE,
-                QUIT_AD_UNIT_ID, mQuitAdRequest);
-        mQuitLandscapeAdView = QuitAdDialogFactory.initAdView(this, AdSize.LARGE_BANNER,
-                QUIT_AD_UNIT_ID, mQuitAdRequest);
+        mQuitPortraitAdView = QuitAdDialogFactory.initPortraitAdView(this, QUIT_AD_UNIT_ID,
+                mQuitAdRequest);
+        mQuitLandscapeAdView = QuitAdDialogFactory.initLandscapeAdView(this, QUIT_AD_UNIT_ID,
+                mQuitAdRequest);
     }
 
     @Override
@@ -121,8 +121,8 @@ public class AdmobMainActivity extends AppCompatActivity {
                 // make AdView again for next quit dialog
                 // prevent child reference
                 // 가로 모드는 7.5% 가량 사용하고 있기에 속도를 위해서 광고를 계속 불러오지 않음
-                mQuitPortraitAdView = QuitAdDialogFactory.initAdView(this, AdSize.MEDIUM_RECTANGLE,
-                        QUIT_AD_UNIT_ID, mQuitAdRequest);
+                mQuitPortraitAdView = QuitAdDialogFactory.initPortraitAdView(this, QUIT_AD_UNIT_ID,
+                        mQuitAdRequest);
             } else {
                 // just finish activity when dialog is null
                 super.onBackPressed();
