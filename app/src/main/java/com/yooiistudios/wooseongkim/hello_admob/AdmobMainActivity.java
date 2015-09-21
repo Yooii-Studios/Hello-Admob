@@ -1,8 +1,8 @@
 package com.yooiistudios.wooseongkim.hello_admob;
 
-import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -15,16 +15,18 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.yooiistudios.wooseongkim.hello_admob.common.network.InternetConnectionManager;
 
 
-public class AdmobMainActivity extends Activity {
+public class AdmobMainActivity extends AppCompatActivity {
     private static final String FULLSCREEN__AD_UNIT_ID  = "ca-app-pub-2310680050309555/7982499025";
     private static final String BANNER_AD_UNIT_ID  = "ca-app-pub-2310680050309555/7499867427";
+    private static final String QUIT_AD_UNIT_ID = "ca-app-pub-2310680050309555/3689313020";
+
     private AdView mAdView;
     private AdView mMediumAdView;
 
     // Quit Ad Dialog
     private AdRequest mQuitAdRequest;
-    private AdView mQuitMediumAdView;
-    private AdView mQuitLargeBannerAdView;
+    private AdView mQuitPortraitAdView;
+    private AdView mQuitLandscapeAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,41 +83,46 @@ public class AdmobMainActivity extends Activity {
         // make AdView earlier for showing ad fast in the quit dialog
         // 애드몹 - Quit Dialog
         mQuitAdRequest = new AdRequest.Builder().build();
-        mQuitMediumAdView = QuitAdDialogFactory.initAdView(this, AdSize.MEDIUM_RECTANGLE,
-                mQuitAdRequest);
-        mQuitLargeBannerAdView = QuitAdDialogFactory.initAdView(this, AdSize.LARGE_BANNER,
-                mQuitAdRequest);
+        mQuitPortraitAdView = QuitAdDialogFactory.initAdView(this, AdSize.MEDIUM_RECTANGLE,
+                QUIT_AD_UNIT_ID, mQuitAdRequest);
+        mQuitLandscapeAdView = QuitAdDialogFactory.initAdView(this, AdSize.LARGE_BANNER,
+                QUIT_AD_UNIT_ID, mQuitAdRequest);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mAdView.resume();
-        mQuitMediumAdView.resume();
-        mQuitLargeBannerAdView.resume();
+        mQuitPortraitAdView.resume();
+        mQuitLandscapeAdView.resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mAdView.pause();
-        mQuitMediumAdView.pause();
-        mQuitLargeBannerAdView.pause();
+        mQuitPortraitAdView.pause();
+        mQuitLandscapeAdView.pause();
     }
 
     @Override
     public void onBackPressed() {
         if (!IabProducts.containsSku(IabProducts.SKU_NO_ADS, this) &&
                 InternetConnectionManager.isNetworkAvailable(this)) {
-            AlertDialog adDialog = QuitAdDialogFactory.makeDialog(AdmobMainActivity.this,
-                    mQuitMediumAdView, mQuitLargeBannerAdView);
+
+            QuitAdDialogFactory.Options options =
+                    new QuitAdDialogFactory.Options(this, mQuitPortraitAdView);
+            options.isRotatable = true;
+            options.landscapeAdView = mQuitLandscapeAdView;
+
+            Dialog adDialog = QuitAdDialogFactory.makeDialog(options);
             if (adDialog != null) {
                 adDialog.show();
                 // make AdView again for next quit dialog
                 // prevent child reference
                 // 가로 모드는 7.5% 가량 사용하고 있기에 속도를 위해서 광고를 계속 불러오지 않음
-                mQuitMediumAdView = QuitAdDialogFactory.initAdView(this, AdSize.MEDIUM_RECTANGLE,
-                        mQuitAdRequest);
+                mQuitPortraitAdView = QuitAdDialogFactory.initAdView(this, AdSize.MEDIUM_RECTANGLE,
+                        QUIT_AD_UNIT_ID, mQuitAdRequest);
             } else {
                 // just finish activity when dialog is null
                 super.onBackPressed();
