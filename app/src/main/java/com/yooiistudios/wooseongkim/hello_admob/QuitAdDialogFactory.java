@@ -72,20 +72,37 @@ public class QuitAdDialogFactory {
         });
         builder.setNegativeButton(activity.getString(R.string.cancel), null);
 
-        final AlertDialog wakeDialog = builder.create();
+        final AlertDialog dialog = builder.create();
 
         if (!options.isRotatable) {
-            wakeDialog.setView(options.portraitAdView);
+            dialog.setView(options.portraitAdView);
+            applyPaddingTop(dialog, options, activity); // only for AppCompat Dialog
         } else {
-            final View contentView = createDefaultContentView(activity);
-            wakeDialog.setView(contentView);
+            View tempFrameView = createTempFrameView(activity);
+            dialog.setView(tempFrameView);
 
-            View rotatableAdView = createRotatableAdView(contentView, options.portraitAdView,
-                    options.landscapeAdView, wakeDialog);
-            wakeDialog.setView(rotatableAdView);
+            View rotatableAdView = createRotatableAdView(tempFrameView, options.portraitAdView,
+                    options.landscapeAdView, dialog);
+            dialog.setView(rotatableAdView);
         }
-        wakeDialog.setCanceledOnTouchOutside(false);
-        return wakeDialog;
+        dialog.setCanceledOnTouchOutside(false);
+        return dialog;
+    }
+
+    private static void applyPaddingTop(AlertDialog dialog, final Options options,
+                                        final Activity activity) {
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                ViewParent parentView = options.portraitAdView.getParent();
+                if (parentView instanceof ViewGroup) {
+                    final ViewGroup contentWrapper = ((ViewGroup) parentView);
+                    int paddingTop = activity.getResources().getDimensionPixelSize(
+                            R.dimen.quit_dialog_padding_top);
+                    contentWrapper.setPadding(0, paddingTop, 0, 0);
+                }
+            }
+        });
     }
 
     private static android.app.AlertDialog makeBaseDialog(Options options) {
@@ -102,55 +119,61 @@ public class QuitAdDialogFactory {
         });
         builder.setNegativeButton(activity.getString(R.string.cancel), null);
 
-        final android.app.AlertDialog wakeDialog = builder.create();
+        final android.app.AlertDialog dialog = builder.create();
 
         if (!options.isRotatable) {
-            wakeDialog.setView(options.portraitAdView);
+            dialog.setView(options.portraitAdView);
         } else {
             // 레이아웃 구조 동적 변경을 위해 setView 총 두 번 사용 필요
-            final View contentView = createDefaultContentView(activity);
-            wakeDialog.setView(contentView);
+            View contentView = createTempFrameView(activity);
+            dialog.setView(contentView);
 
             View rotatableAdView = createRotatableAdView(contentView, options.portraitAdView,
-                    options.landscapeAdView, wakeDialog);
-            wakeDialog.setView(rotatableAdView);
+                    options.landscapeAdView, dialog);
+            dialog.setView(rotatableAdView);
         }
-        wakeDialog.setCanceledOnTouchOutside(false);
-        return wakeDialog;
+        dialog.setCanceledOnTouchOutside(false);
+        return dialog;
     }
 
+    /**
+     * AdView 추가 전 임시적으로 대입하는 뷰
+     */
     @NonNull
-    private static View createDefaultContentView(Activity activity) {
+    private static View createTempFrameView(Activity activity) {
         final View contentView = new View(activity);
         contentView.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         return contentView;
     }
 
-    private static View createRotatableAdView(@NonNull final View contentView,
+    private static View createRotatableAdView(@NonNull final View tempFrameView,
                                               @NonNull final AdView portraitAdView,
                                               @Nullable final AdView landscapeAdView,
-                                              @NonNull final Dialog wakeDialog) {
-        wakeDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                                              @NonNull final Dialog alertDialog) {
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
             @Override
             public void onShow(DialogInterface dialog) {
-                ViewParent parentView = contentView.getParent();
+                ViewParent parentView = tempFrameView.getParent();
                 if (parentView instanceof ViewGroup) {
                     final ViewGroup contentWrapper = ((ViewGroup) parentView);
-                    contentWrapper.removeView(contentView);
+                    int paddingTop = tempFrameView.getResources().getDimensionPixelSize(
+                            R.dimen.quit_dialog_padding_top);
+                    contentWrapper.setPadding(0, paddingTop, 0, 0);
+                    contentWrapper.removeView(tempFrameView);
 
-                    if (isDevicePortrait(contentView)) {
+                    if (isDevicePortrait(tempFrameView)) {
                         contentWrapper.addView(portraitAdView);
-                        wakeDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialog) {
                                 contentWrapper.removeView(portraitAdView);
                             }
                         });
-                    } else if (isDeviceLandscape(contentView) && landscapeAdView != null) {
+                    } else if (isDeviceLandscape(tempFrameView) && landscapeAdView != null) {
                         contentWrapper.addView(landscapeAdView);
-                        wakeDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialog) {
                                 contentWrapper.removeView(landscapeAdView);
@@ -160,7 +183,7 @@ public class QuitAdDialogFactory {
                 }
             }
         });
-        return contentView;
+        return tempFrameView;
     }
 
     private static boolean isDevicePortrait(final View contentView) {
