@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="banner_ad" type="id"/>
+    <item name="medium_banner_ad" type="id"/>
+</resources>

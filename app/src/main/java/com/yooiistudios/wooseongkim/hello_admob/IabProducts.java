@@ -9,9 +9,10 @@ import java.util.List;
 /**
  * Created by StevenKim in Morning Kit from Yooii Studios Co., LTD. on 2014. 1. 9.
  *
- * SKIabProducts
+ * IabProducts
+ *  유이스튜디오 앱에 일반적으로 있는 결제 아이템 클래스. 구매여부를 확인할 때에도 사용
  */
-public class SKIabProducts {
+public class IabProducts {
     public static final String SKU_FULL_VERSION = "full_version"; // "full_version_test"
     public static final String SKU_MORE_ALARM_SLOTS = "functions.more_alarm_slots"; // "more_alarm_slots_test"
     public static final String SKU_NO_ADS = "functions.no_ads"; // "no_ads_test"
